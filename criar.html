@@ -1,298 +1,284 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - ZedoLink</title>
     <style>
-    :root {
-        --header-bg: #2c2c3d;
-        --body-bg: #f0f2f5;
-        --form-bg: #ffffff;
-        --primary-button-bg: #5cb85c;
-        --primary-button-hover: #4cae4c;
-        --secondary-button-bg: #337ab7;
-        --edit-button-bg: #f0ad4e;
-        --delete-button-bg: #d9534f;
-        --text-dark: #333;
-        --text-light: #fff;
-        --border-color: #ddd;
-        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        --border-radius: 6px;
-    }
-    body {
-        font-family: Arial, sans-serif;
-        background-color: var(--body-bg);
-        color: var(--text-dark);
-        margin: 0;
-    }
-    .header {
-        background-color: var(--header-bg);
-        padding: 15px 0;
-        display: flex;
-        align-items: center;
-    }
-    .header-container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 30px;
-    }
-    .header .logo img {
-        height: 65px;
-    }
-    .main-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        padding: 30px;
-        max-width: 1200px;
-        margin: auto;
-    }
-    .form-section {
-        flex: 1;
-        min-width: 350px;
-        background-color: var(--form-bg);
-        padding: 25px;
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        align-self: flex-start;
-    }
-    .links-section {
-        flex: 1.5;
-        min-width: 400px;
-    }
-    .form-section h2, .links-section h2 {
-        font-size: 1.5rem;
-        margin-top: 0;
-        margin-bottom: 20px;
-    }
-    .links-section h2 { font-size: 1.2rem; color: #555; }
-    #formCriarLink input[type="url"] {
-        width: calc(100% - 24px);
-        padding: 12px;
-        font-size: 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius);
-        margin-bottom: 15px;
-    }
-    #formCriarLink button {
-        width: 100%;
-        padding: 15px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: var(--text-light);
-        background-color: var(--primary-button-bg);
-        border: none;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    #formCriarLink button:hover { background-color: var(--primary-button-hover); }
-    #status-message {
-        display: none;
-        margin-top: 15px;
-        padding: 15px;
-        border-radius: var(--border-radius);
-        text-align: center;
-        font-weight: bold;
-    }
-    #status-message.success {
-        background-color: #dff0d8;
-        color: #3c763d;
-        border: 1px solid #d6e9c6;
-    }
-    #status-message.error {
-        background-color: #f2dede;
-        color: #a94442;
-        border: 1px solid #ebccd1;
-    }
-    .link-item {
-        background-color: var(--form-bg);
-        border-radius: var(--border-radius);
-        box-shadow: var(--box-shadow);
-        padding: 15px;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        flex-wrap: wrap;
-    }
-    .link-item .urls {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        min-width: 0;
-    }
-    .link-item .short-url a {
-        font-weight: bold;
-        color: var(--text-dark);
-        text-decoration: none;
-        font-size: 1.1rem;
-        word-break: break-all;
-    }
-    .link-item .original-url {
-        color: #6c757d;
-        font-size: 0.9rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-    }
-    .link-actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-    .link-actions button {
-        padding: 6px 12px;
-        font-size: 0.85rem;
-        color: var(--text-light);
-        border: none;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        background-color: var(--secondary-button-bg);
-    }
+        /* O CSS está 100% correto e não precisa de alterações */
+        :root {
+            --header-bg: #2c2c3d; --body-bg: #f0f2f5; --form-bg: #ffffff;
+            --primary-button-bg: #5cb85c; --primary-button-hover: #4cae4c;
+            --secondary-button-bg: #337ab7; --edit-button-bg: #f0ad4e;
+            --delete-button-bg: #d9534f; --text-dark: #333; --text-light: #fff;
+            --border-color: #ddd; --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 6px;
+        }
+        body { font-family: Arial, sans-serif; background-color: var(--body-bg); color: var(--text-dark); margin: 0; }
+        .header { background-color: var(--header-bg); padding: 15px 0; display: flex; align-items: center; }
+        .header-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+        .header .logo img { height: 65px; }
+        .main-container { display: flex; flex-wrap: wrap; gap: 30px; padding: 30px; max-width: 1200px; margin: auto; }
+        .form-section { flex: 1; min-width: 350px; background-color: var(--form-bg); padding: 25px; border-radius: var(--border-radius); box-shadow: var(--box-shadow); align-self: flex-start; }
+        .links-section { flex: 1.5; min-width: 400px; }
+        .form-section h2, .links-section h2 { font-size: 1.5rem; margin-top: 0; margin-bottom: 20px; }
+        #formCriarLink input[type="url"] { width: calc(100% - 24px); padding: 12px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-bottom: 15px; }
+        #formCriarLink button { width: 100%; padding: 15px; font-size: 1.2rem; font-weight: bold; color: var(--text-light); background-color: var(--primary-button-bg); border: none; border-radius: var(--border-radius); cursor: pointer; transition: background-color 0.2s; }
+        #formCriarLink button:hover { background-color: var(--primary-button-hover); }
+        #status-message { display: none; margin-top: 15px; padding: 15px; border-radius: var(--border-radius); text-align: center; font-weight: bold; }
+        #status-message.success { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
+        #status-message.error { background-color: #f2dede; color: #a94442; border: 1px solid #ebccd1; }
+        .link-item { background-color: var(--form-bg); border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; }
+        .link-item-content { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
+        .link-item-meme img { width: 80px; height: 80px; border-radius: var(--border-radius); object-fit: cover; }
+        .link-item .urls { display: flex; flex-direction: column; }
+        .link-item .short-url a { font-weight: bold; color: var(--text-dark); text-decoration: none; font-size: 1.1rem; }
+        .link-item .original-url { color: #6c757d; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 350px; }
+        .link-item .link-actions { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 5px; }
+        .link-actions button { padding: 6px 12px; font-size: 0.85rem; color: var(--text-light); border: none; border-radius: var(--border-radius); cursor: pointer; }
+        .btn-edit { background-color: var(--edit-button-bg); }
+        .btn-delete { background-color: var(--delete-button-bg); }
+        .btn-copy, .btn-qr, .btn-share { background-color: var(--secondary-button-bg); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: var(--border-radius); width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; }
+        .modal-content input { width: calc(100% - 24px); padding: 12px; margin-bottom: 20px; }
+        .modal-content button { margin-right: 10px; }
+        #qr-code-img { max-width: 200px; margin: 20px auto; display: block; }
+        #meme-feedback { position: fixed; top: 50%; right: 30px; z-index: 2000; background-color: var(--header-bg); color: var(--text-light); padding: 15px; border-radius: var(--border-radius); display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); opacity: 0; transform: translate(200%, -50%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease; }
+        #meme-feedback.show { opacity: 1; transform: translate(0, -50%); }
+        #meme-feedback img { width: 70px; height: 70px; object-fit: cover; border-radius: 50%; border: 2px solid white; }
+        #meme-feedback p { margin: 0; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <div class="header-container">
-        <div class="logo">
-            <img src="img/ZEDOLINK.png" alt="ZedoLink Logo" />
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="img/ZEDOLINK.png" alt="ZedoLink Logo">
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="form-section">
+            <h2>Encurtar uma URL longa</h2>
+            <form id="formCriarLink">
+                <input type="url" id="urlOriginal" placeholder="Cole sua URL longa aqui" required>
+                <button type="submit">Encurtar URL</button>
+            </form>
+            <div id="status-message"></div>
+        </section>
+
+        <section class="links-section">
+            <h2>Seus Links Recentes da ZedoLink</h2>
+            <div id="links-lista"></div>
+        </section>
+    </main>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3>Editar URL de Destino</h3>
+            <input type="url" id="edit-url-input">
+            <button id="save-edit-btn" style="background-color: var(--primary-button-bg); color: white;">Salvar</button>
+            <button id="cancel-edit-btn" style="background-color: var(--secondary-button-bg); color: white;">Cancelar</button>
         </div>
     </div>
-</header>
+    <div id="qr-modal" class="modal">
+        <div class="modal-content">
+            <h3>QR Code do seu Link</h3>
+            <img id="qr-code-img" src="" alt="QR Code">
+            <button id="close-qr-btn" style="background-color: var(--secondary-button-bg); color: white;">Fechar</button>
+        </div>
+    </div>
+    <div id="meme-feedback">
+        <img id="feedback-img" src="" alt="Feedback">
+        <p id="feedback-text"></p>
+    </div>
 
-<main class="main-container">
-    <section class="form-section">
-        <h2>Encurtar uma URL longa</h2>
-        <form id="formCriarLink">
-            <input type="url" id="urlOriginal" placeholder="Cole sua URL longa aqui" required />
-            <button type="submit">Encurtar URL</button>
-        </form>
-        <div id="status-message"></div>
-    </section>
+    <script>
+        // --- SELETORES DE ELEMENTOS ---
+        const formCriarLink = document.getElementById('formCriarLink');
+        const urlOriginalInput = document.getElementById('urlOriginal');
+        const linksListaDiv = document.getElementById('links-lista');
+        const statusMessageDiv = document.getElementById('status-message');
+        const submitButton = formCriarLink.querySelector('button');
+        const editModal = document.getElementById('edit-modal');
+        const editUrlInput = document.getElementById('edit-url-input');
+        const saveEditBtn = document.getElementById('save-edit-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const qrModal = document.getElementById('qr-modal');
+        const qrCodeImg = document.getElementById('qr-code-img');
+        const closeQrBtn = document.getElementById('close-qr-btn');
+        const memeFeedbackDiv = document.getElementById('meme-feedback');
+        const feedbackImg = document.getElementById('feedback-img');
+        const feedbackText = document.getElementById('feedback-text');
+        let idParaEditar = null;
 
-    <section class="links-section">
-        <h2>É o ZédoLink</h2>
-        <div id="links-lista"></div>
-    </section>
-</main>
+        // --- BANCO DE DADOS DE MEMES ---
+        const feedbackMemes = {
+            'btn-copy':   { meme: 'IMG/aicemequebra.webp', text: 'Link Copiado!' },
+            'btn-edit':   { meme: 'IMG/gordinhodancando.jpeg', text: 'Editando...' },
+            'btn-delete': { meme: 'IMG/calmatrav.webp', text: 'Excluindo...' },
+            'btn-share':  { meme: 'IMG/homerdancando.webp', text: 'Compartilhe!' },
+            'btn-qr':     { meme: 'IMG/fe9d8ca4-7fdf-44f3-8dd8-ef4f6e4c3022.webp', text: 'QR Code Gerado!' }
+        };
 
-<script>
-    // Helper para gerar ID curto aleatório
-    function gerarIdCurto() {
-        return Math.random().toString(36).substring(2, 8);
-    }
+        // --- FUNÇÕES ---
+        async function renderizarLinks() {
+            try {
+                const response = await fetch('/links.json?v=' + new Date().getTime());
+                if (!response.ok) throw new Error('Falha ao carregar a lista de links.');
+                const ZedoLinksDB = await response.json();
 
-    // Função para pegar links do localStorage
-    function pegarLinks() {
-        const links = localStorage.getItem('zedolink_links');
-        return links ? JSON.parse(links) : [];
-    }
-
-    // Salvar links no localStorage
-    function salvarLinks(links) {
-        localStorage.setItem('zedolink_links', JSON.stringify(links));
-    }
-
-    // Renderizar lista de links
-    function renderizarLinks() {
-        const lista = pegarLinks();
-        const container = document.getElementById('links-lista');
-        container.innerHTML = '';
-
-        if (lista.length === 0) {
-            container.textContent = 'Nenhum link encurtado ainda.';
-            return;
+                const links = ZedoLinksDB || [];
+                linksListaDiv.innerHTML = '';
+                if (links.length === 0) {
+                    linksListaDiv.innerHTML = '<p>Nenhum link público criado ainda.</p>';
+                    return;
+                }
+                links.slice().reverse().forEach(link => {
+                    const shortUrl = `${window.location.origin}/?id=${link.id}`;
+                    const linkElement = document.createElement('div');
+                    linkElement.className = 'link-item';
+                    linkElement.innerHTML = `
+                        <div class="link-item-meme"> <img src="${link.memeUrl}" alt="Meme do Link"> </div>
+                        <div class="link-item-content">
+                            <div class="urls">
+                                <span class="short-url"><a href="${shortUrl}" target="_blank">${shortUrl}</a></span>
+                                <span class="original-url" title="${link.original}">Destino: ${link.original}</span>
+                            </div>
+                            <div class="link-actions">
+                                <button class="btn-copy" data-url="${shortUrl}">Copiar</button>
+                                <button class="btn-share" data-url="${shortUrl}">Share</button>
+                                <button class="btn-qr" data-url="${shortUrl}">QR</button>
+                                <button class="btn-edit" data-id="${link.id}" data-original-url="${link.original}">Editar</button>
+                                <button class="btn-delete" data-id="${link.id}">Excluir</button>
+                            </div>
+                        </div>
+                    `;
+                    linksListaDiv.appendChild(linkElement);
+                });
+            } catch (error) {
+                linksListaDiv.innerHTML = `<p style="color: red;">Não foi possível carregar a lista de links. Verifique se o arquivo 'links.json' existe e está acessível.</p>`;
+                console.error(error);
+            }
         }
 
-        lista.forEach(({ id, original, curto }) => {
-            const item = document.createElement('div');
-            item.className = 'link-item';
-
-            item.innerHTML = `
-                <div class="urls">
-                    <div class="short-url"><a href="${curto}" target="_blank" rel="noopener noreferrer">${curto}</a></div>
-                    <div class="original-url" title="${original}">${original}</div>
-                </div>
-                <div class="link-actions">
-                    <button class="btn-copy" data-curto="${curto}">Copiar</button>
-                    <button class="btn-delete" data-id="${id}">Excluir</button>
-                </div>
-            `;
-            container.appendChild(item);
-        });
-    }
-
-    // Mostrar mensagem de status
-    function showStatusMessage(msg, tipo = 'success') {
-        const div = document.getElementById('status-message');
-        div.textContent = msg;
-        div.className = tipo === 'success' ? 'success' : 'error';
-        div.style.display = 'block';
-        setTimeout(() => {
-            div.style.display = 'none';
-        }, 3000);
-    }
-
-    // Eventos
-    document.getElementById('formCriarLink').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const urlInput = document.getElementById('urlOriginal');
-        const url = urlInput.value.trim();
-
-        if (!url) {
-            showStatusMessage('Digite uma URL válida.', 'error');
-            return;
+        function showMemeFeedback(memeUrl, message) {
+            feedbackImg.src = memeUrl;
+            feedbackText.textContent = message;
+            memeFeedbackDiv.classList.add('show');
+            setTimeout(() => { memeFeedbackDiv.classList.remove('show'); }, 2500);
         }
 
-        const links = pegarLinks();
+        function showStatusMessage(message, type = 'success') {
+            statusMessageDiv.innerHTML = message;
+            statusMessageDiv.className = type;
+            statusMessageDiv.style.display = 'block';
+            setTimeout(() => { statusMessageDiv.style.display = 'none'; }, 8000);
+        }
 
-        // Gera URL curta com domínio fictício
-        const idCurto = gerarIdCurto();
-        const urlCurta = `${location.origin}/r/${idCurto}`;
+        function fecharModals() {
+            editModal.style.display = 'none';
+            qrModal.style.display = 'none';
+        }
 
-        links.push({
-            id: Date.now(),
-            original: url,
-            curto: urlCurta
+        // --- EVENT LISTENERS ---
+        formCriarLink.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const urlParaEncurtar = urlOriginalInput.value;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Enviando...';
+            try {
+                const response = await fetch('/.netlify/functions/adicionar-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: urlParaEncurtar })
+                });
+                if (!response.ok) throw new Error('Falha na resposta do servidor.');
+                showStatusMessage(`✅ Sucesso! Seu novo link estará no ar em ~1 minuto. <br>Atualize a página para vê-lo na lista.`);
+                formCriarLink.reset();
+            } catch (error) {
+                showStatusMessage('❌ Ops! Algo deu errado. Verifique o console e tente novamente.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Encurtar URL';
+            }
         });
 
-        salvarLinks(links);
+        linksListaDiv.addEventListener('click', async function(event) {
+            const target = event.target;
+            if (target.tagName !== 'BUTTON') return;
+            const url = target.dataset.url;
+            const id = target.dataset.id;
+            for (const btnClass in feedbackMemes) {
+                if (target.classList.contains(btnClass)) {
+                    const feedback = feedbackMemes[btnClass];
+                    showMemeFeedback(feedback.meme, feedback.text);
+                    break;
+                }
+            }
+            if (target.classList.contains('btn-copy')) {
+                navigator.clipboard.writeText(url).then(() => {
+                    target.textContent = 'Copiado!';
+                    setTimeout(() => { target.textContent = 'Copiar'; }, 2000);
+                });
+            } else if (target.classList.contains('btn-share')) {
+                if (navigator.share) {
+                    navigator.share({ title: 'ZedoLink', text: 'Confira este link:', url: url });
+                } else { alert('Seu navegador não suporta a função de compartilhamento.'); }
+            } else if (target.classList.contains('btn-qr')) {
+                qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+                qrModal.style.display = 'flex';
+            } else if (target.classList.contains('btn-edit')) {
+                idParaEditar = id;
+                editUrlInput.value = target.dataset.originalUrl;
+                editModal.style.display = 'flex';
+            } else if (target.classList.contains('btn-delete')) {
+                if (confirm('Você tem certeza que deseja excluir este link permanentemente?')) {
+                    try {
+                        const response = await fetch('/.netlify/functions/excluir-link', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: id })
+                        });
+                        if (!response.ok) throw new Error('Falha ao excluir o link.');
+                        showStatusMessage('✅ Link excluído! A lista será atualizada em ~1 minuto.');
+                    } catch (error) {
+                        showStatusMessage('❌ Ops! Algo deu errado ao excluir o link.', 'error');
+                    }
+                }
+            }
+        });
+
+        saveEditBtn.addEventListener('click', async function() {
+            const novaUrl = editUrlInput.value;
+            if (!idParaEditar || !novaUrl) return;
+            saveEditBtn.disabled = true;
+            saveEditBtn.textContent = 'Salvando...';
+            try {
+                const response = await fetch('/.netlify/functions/editar-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: idParaEditar, newUrl: novaUrl })
+                });
+                if (!response.ok) throw new Error('Falha ao salvar a edição.');
+                fecharModals();
+                showStatusMessage('✅ Edição salva! A alteração estará no ar em ~1 minuto.');
+            } catch (error) {
+                alert('Ops! Algo deu errado ao salvar a edição.');
+            } finally {
+                saveEditBtn.disabled = false;
+                saveEditBtn.textContent = 'Salvar';
+                idParaEditar = null;
+            }
+        });
+        
+        cancelEditBtn.addEventListener('click', fecharModals);
+        closeQrBtn.addEventListener('click', fecharModals);
+
+        // --- INICIALIZAÇÃO ---
         renderizarLinks();
-        urlInput.value = '';
-        showStatusMessage('✅ URL encurtada com sucesso!');
-    });
-
-    // Delegação para botões copiar e excluir
-    document.getElementById('links-lista').addEventListener('click', function (e) {
-        if (e.target.tagName !== 'BUTTON') return;
-
-        if (e.target.classList.contains('btn-copy')) {
-            const curto = e.target.dataset.curto;
-            navigator.clipboard.writeText(curto).then(() => {
-                showStatusMessage('Link copiado para a área de transferência!');
-            }).catch(() => {
-                showStatusMessage('Falha ao copiar o link.', 'error');
-            });
-        }
-
-        if (e.target.classList.contains('btn-delete')) {
-            const id = Number(e.target.dataset.id);
-            let links = pegarLinks();
-            links = links.filter(link => link.id !== id);
-            salvarLinks(links);
-            renderizarLinks();
-            showStatusMessage('Link excluído.');
-        }
-    });
-
-    // Inicialização
-    renderizarLinks();
-</script>
-
+    </script>
 </body>
 </html>
