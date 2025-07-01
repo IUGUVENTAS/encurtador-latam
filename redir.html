@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+    const links = JSON.parse(localStorage.getItem("meus_links") || "[]");
+    const destino = links.find(l => l.id === id)?.original;
+    if (destino) {
+      location.href = destino;
+    } else {
+      document.write("🔍 Link não encontrado.");
+    }
+  </script>
+</head>
+<body></body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Enlaces Cortos</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; background: #f9f9f9; }
+    input, button { padding: 8px; margin: 4px; }
+    .list { margin-top: 2em; }
+    .item { background: #fff; padding: 1em; border-radius: 8px; margin-bottom: 1em; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .short-url { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🔗 Encurtador de Links</h1>
+  <input id="urlInput" type="text" placeholder="Cole o escreva a URL completa..." size="50" />
+  <button onclick="encurtar()">Encurtar</button>
+
+  <div class="list" id="listaLinks"></div>
+
+  <script>
+    const baseURL = window.location.origin + "/redir.html?id=";
+
+    function gerarID() {
+      return Math.random().toString(36).substr(2, 6);
+    }
+
+    function salvarLinks(links) {
+      localStorage.setItem("meus_links", JSON.stringify(links));
+    }
+
+    function carregarLinks() {
+      return JSON.parse(localStorage.getItem("meus_links") || "[]");
+    }
+
+    function encurtar() {
+      const original = document.getElementById("urlInput").value.trim();
+      if (!original) return;
+
+      const links = carregarLinks();
+      const id = gerarID();
+      links.push({ id, original });
+      salvarLinks(links);
+      document.getElementById("urlInput").value = "";
+      renderizar();
+    }
+
+    function editar(id) {
+      const novaURL = prompt("Nova URL de destino:");
+      if (!novaURL) return;
+
+      const links = carregarLinks().map(l => l.id === id ? { ...l, original: novaURL } : l);
+      salvarLinks(links);
+      renderizar();
+    }
+
+    function renderizar() {
+      const links = carregarLinks();
+      const container = document.getElementById("listaLinks");
+      container.innerHTML = "";
+
+      links.forEach(link => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <div>➡️ Original: <a href="${link.original}" target="_blank">${link.original}</a></div>
+          <div>✂️ Curto: <span class="short-url">${baseURL + link.id}</span></div>
+          <button onclick="editar('${link.id}')">Editar destino</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    renderizar();
+  </script>
+</body>
+</html>
