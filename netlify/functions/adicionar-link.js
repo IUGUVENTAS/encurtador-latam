@@ -4,7 +4,7 @@
 
 // Informações do seu repositório.
 const GITHUB_OWNER = 'IUGUVENTAS'; // Seu usuário do GitHub, já corrigido.
-const GITHUB_REPO = 'ENCURTADOR LATAM'; // O nome do seu repositório
+const GITHUB_REPO = 'encurtador-latam';; // O nome do seu repositório
 const FILE_PATH = 'links-db.js'; // O arquivo que será nosso banco de dados
 
 // A função principal que a Netlify irá executar.
