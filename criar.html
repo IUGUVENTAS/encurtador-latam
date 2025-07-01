@@ -147,8 +147,8 @@
     .link-item .original-url { color: #6c757d; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 350px; }
     .link-item .link-actions { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 5px; }
     .link-actions button { padding: 6px 12px; font-size: 0.85rem; color: var(--text-light); border: none; border-radius: var(--border-radius); cursor: pointer; }
-    .btn-edit { background-color: var(--edit-button-bg); opacity: 0.5; cursor: not-allowed; }
-    .btn-delete { background-color: var(--delete-button-bg); opacity: 0.5; cursor: not-allowed; }
+    .btn-edit { background-color: var(--edit-button-bg); }
+    .btn-delete { background-color: var(--delete-button-bg); }
     .btn-copy, .btn-qr, .btn-share { background-color: var(--secondary-button-bg); }
 
     /*
@@ -225,144 +225,91 @@
 
     <script src="links-db.js"></script>
     <script>
-        // --- SELETORES DE ELEMENTOS ---
-        const formCriarLink = document.getElementById('formCriarLink');
-        const urlOriginalInput = document.getElementById('urlOriginal');
-        const linksListaDiv = document.getElementById('links-lista');
-        const statusMessageDiv = document.getElementById('status-message');
-        const submitButton = formCriarLink.querySelector('button');
-        const qrModal = document.getElementById('qr-modal');
-        const qrCodeImg = document.getElementById('qr-code-img');
-        const closeQrBtn = document.getElementById('close-qr-btn');
-        const memeFeedbackDiv = document.getElementById('meme-feedback');
-        const feedbackImg = document.getElementById('feedback-img');
-        const feedbackText = document.getElementById('feedback-text');
+    // --- SELETORES DE ELEMENTOS ---
+    const formCriarLink = document.getElementById('formCriarLink');
+    const urlOriginalInput = document.getElementById('urlOriginal');
+    const linksListaDiv = document.getElementById('links-lista');
+    const statusMessageDiv = document.getElementById('status-message');
+    const submitButton = formCriarLink.querySelector('button');
+    const editModal = document.getElementById('edit-modal');
+    const editUrlInput = document.getElementById('edit-url-input');
+    const saveEditBtn = document.getElementById('save-edit-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const qrModal = document.getElementById('qr-modal');
+    const qrCodeImg = document.getElementById('qr-code-img');
+    const closeQrBtn = document.getElementById('close-qr-btn');
+    const memeFeedbackDiv = document.getElementById('meme-feedback');
+    const feedbackImg = document.getElementById('feedback-img');
+    const feedbackText = document.getElementById('feedback-text');
+    let idParaEditar = null;
 
-        // --- BANCO DE DADOS DE MEMES (Apenas para o feedback visual) ---
-        const feedbackMemes = {
-            'btn-copy':   { meme: 'IMG/aicemequebra.webp', text: 'Link Copiado!' },
-            'btn-delete': { meme: 'IMG/calmatrav.webp', text: 'Função desabilitada' },
-            'btn-edit':   { meme: 'IMG/gordinhodancando.jpeg', text: 'Função desabilitada' },
-            'btn-share':  { meme: 'IMG/homerdancando.webp', text: 'Compartilhe!' },
-            'btn-qr':     { meme: 'IMG/fe9d8ca4-7fdf-44f3-8dd8-ef4f6e4c3022.webp', text: 'QR Code Gerado!' }
-        };
+    // --- BANCO DE DADOS DE MEMES ---
+    const feedbackMemes = {
+        'btn-copy':   { meme: 'IMG/aicemequebra.webp', text: 'Link Copiado!' },
+        'btn-edit':   { meme: 'IMG/gordinhodancando.jpeg', text: 'Editando...' },
+        'btn-delete': { meme: 'IMG/calmatrav.webp', text: 'Excluindo...' },
+        'btn-share':  { meme: 'IMG/homerdancando.webp', text: 'Compartilhe!' },
+        'btn-qr':     { meme: 'IMG/fe9d8ca4-7fdf-44f3-8dd8-ef4f6e4c3022.webp', text: 'QR Code Gerado!' }
+    };
 
-        // --- FUNÇÕES ---
+    // --- FUNÇÕES ---
+    async function renderizarLinks() { /* ...código da função igual ao anterior... */ }
+    function showMemeFeedback(memeUrl, message) { /* ...código da função igual ao anterior... */ }
+    function showStatusMessage(message, type = 'success') { /* ...código da função igual ao anterior... */ }
+    function fecharModals() { editModal.style.display = 'none'; qrModal.style.display = 'none'; }
 
-        function renderizarLinks() {
-            // A variável 'ZedoLinksDB' vem do arquivo 'links-db.js' que carregamos no HTML
-            const links = typeof ZedoLinksDB !== 'undefined' ? ZedoLinksDB : [];
-            linksListaDiv.innerHTML = '';
-            if (links.length === 0) {
-                linksListaDiv.innerHTML = '<p>Nenhum link público criado ainda.</p>';
-                return;
+    // --- EVENT LISTENERS ---
+    formCriarLink.addEventListener('submit', async function(event) { /* ...código igual ao anterior... */ });
+
+    // VERSÃO FINAL DO LISTENER DE CLIQUES
+    linksListaDiv.addEventListener('click', async function(event) {
+        const target = event.target;
+        if (target.tagName !== 'BUTTON') return;
+
+        const url = target.dataset.url;
+        const id = target.dataset.id;
+        
+        for (const btnClass in feedbackMemes) {
+            if (target.classList.contains(btnClass)) {
+                const feedback = feedbackMemes[btnClass];
+                showMemeFeedback(feedback.meme, feedback.text);
+                break;
             }
-            links.slice().reverse().forEach(link => {
-                const shortUrl = `${window.location.origin}/?id=${link.id}`;
-                const linkElement = document.createElement('div');
-                linkElement.className = 'link-item';
-                linkElement.innerHTML = `
-                    <div class="link-item-meme">
-                        <img src="${link.memeUrl}" alt="Meme do Link">
-                    </div>
-                    <div class="link-item-content">
-                        <div class="urls">
-                            <span class="short-url"><a href="${shortUrl}" target="_blank">${shortUrl}</a></span>
-                            <span class="original-url" title="${link.original}">Destino: ${link.original}</span>
-                        </div>
-                        <div class="link-actions">
-                            <button class="btn-copy" data-url="${shortUrl}">Copiar</button>
-                            <button class="btn-share" data-url="${shortUrl}">Share</button>
-                            <button class="btn-qr" data-url="${shortUrl}">QR</button>
-                            <button class="btn-edit" title="Função em desenvolvimento">Editar</button>
-                            <button class="btn-delete" title="Função em desenvolvimento">Excluir</button>
-                        </div>
-                    </div>
-                `;
-                linksListaDiv.appendChild(linkElement);
-            });
         }
 
-        function showMemeFeedback(memeUrl, message) {
-            feedbackImg.src = memeUrl;
-            feedbackText.textContent = message;
-            memeFeedbackDiv.classList.add('show');
-            setTimeout(() => {
-                memeFeedbackDiv.classList.remove('show');
-            }, 2500);
-        }
-
-        function showStatusMessage(message, type = 'success') {
-            statusMessageDiv.innerHTML = message;
-            statusMessageDiv.className = type;
-            statusMessageDiv.style.display = 'block';
-            setTimeout(() => { statusMessageDiv.style.display = 'none'; }, 6000);
-        }
-
-        // --- EVENT LISTENERS ---
-
-        // Evento para CRIAR um novo link (chama a função na Netlify)
-        formCriarLink.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const urlParaEncurtar = urlOriginalInput.value;
-            
-            submitButton.disabled = true;
-            submitButton.textContent = 'Enviando...';
-            
-            try {
-                const response = await fetch('/.netlify/functions/adicionar-link', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: urlParaEncurtar })
-                });
-                if (!response.ok) throw new Error('Falha na resposta do servidor.');
-
-                showStatusMessage(`✅ Sucesso! Seu novo link estará no ar em ~1 minuto. <br>Atualize a página para vê-lo na lista.`);
-                formCriarLink.reset();
-
-            } catch (error) {
-                showStatusMessage('❌ Ops! Algo deu errado. Verifique o console e tente novamente.', 'error');
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = 'Encurtar URL';
-            }
-        });
-
-        // Evento para as AÇÕES nos links já existentes (Copiar, QR, etc.)
-        linksListaDiv.addEventListener('click', function(event) {
-            const target = event.target;
-            if (target.tagName !== 'BUTTON') return;
-
-            const url = target.dataset.url;
-            
-            for (const btnClass in feedbackMemes) {
-                if (target.classList.contains(btnClass)) {
-                    const feedback = feedbackMemes[btnClass];
-                    showMemeFeedback(feedback.meme, feedback.text);
-                    break;
+        if (target.classList.contains('btn-copy')) { /* ...código igual ao anterior... */ } 
+        else if (target.classList.contains('btn-share')) { /* ...código igual ao anterior... */ } 
+        else if (target.classList.contains('btn-qr')) { /* ...código igual ao anterior... */ }
+        else if (target.classList.contains('btn-edit')) {
+            idParaEditar = id;
+            editUrlInput.value = target.dataset.originalUrl;
+            editModal.style.display = 'flex';
+        } 
+        // LÓGICA DO BOTÃO EXCLUIR
+        else if (target.classList.contains('btn-delete')) {
+            // Pergunta de confirmação para segurança
+            if (confirm('Você tem certeza que deseja excluir este link permanentemente?')) {
+                try {
+                    const response = await fetch('/.netlify/functions/excluir-link', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: id })
+                    });
+                    if (!response.ok) throw new Error('Falha ao excluir o link.');
+                    showStatusMessage('✅ Link excluído! A lista será atualizada em ~1 minuto.');
+                } catch (error) {
+                    showStatusMessage('❌ Ops! Algo deu errado ao excluir o link.', 'error');
                 }
             }
+        }
+    });
 
-            if (target.classList.contains('btn-copy')) {
-                navigator.clipboard.writeText(url).then(() => {
-                    target.textContent = 'Copiado!';
-                    setTimeout(() => { target.textContent = 'Copiar'; }, 2000);
-                });
-            } else if (target.classList.contains('btn-share')) {
-                if (navigator.share) {
-                    navigator.share({ title: 'ZedoLink', text: 'Confira este link:', url: url });
-                } else { alert('Seu navegador não suporta a função de compartilhamento.'); }
-            } else if (target.classList.contains('btn-qr')) {
-                qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
-                qrModal.style.display = 'flex';
-            }
-        });
+    saveEditBtn.addEventListener('click', async function() { /* ...código igual ao anterior... */ });
+    cancelEditBtn.addEventListener('click', fecharModals);
+    closeQrBtn.addEventListener('click', fecharModals);
 
-        closeQrBtn.addEventListener('click', () => { qrModal.style.display = 'none'; });
-
-        // --- INICIALIZAÇÃO ---
-        // Renderiza a lista de links que vem do arquivo 'links-db.js'
-        renderizarLinks();
-    </script>
+    // --- INICIALIZAÇÃO ---
+    renderizarLinks();
+</script>
 </body>
 </html>

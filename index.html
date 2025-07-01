@@ -1,46 +1,42 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecionando ZedoLink...</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f2f5; color: #333; }
-    p { font-size: 1.2rem; text-align: center; padding: 20px; }
-  </style>
+    <meta charset="UTF-8" />
+    <title>Redirecionando ZedoLink...</title>
+    <style> body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; } </style>
 </head>
 <body>
-  <p id="mensagem">Procurando seu link...</p>
+    <p id="mensagem">Procurando seu link...</p>
+    <script>
+        async function redirecionar() {
+            const mensagemElemento = document.getElementById("mensagem");
+            try {
+                // AQUI ESTÁ A CORREÇÃO: Adicionamos o 'cache buster'
+                const response = await fetch('/links.json?v=' + new Date().getTime());
+                if (!response.ok) throw new Error('Falha ao carregar a lista de links.');
+                const linksDB = await response.json();
 
-  <script src="links-db.js"></script>
+                const params = new URLSearchParams(window.location.search);
+                const id = params.get("id");
 
-  <script>
-    function redirecionar() {
-      const mensagemElemento = document.getElementById("mensagem");
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get("id");
+                if (!id) {
+                    mensagemElemento.textContent = "❌ Nenhum ID de link foi fornecido.";
+                    return;
+                }
+                
+                const linkEncontrado = linksDB.find(link => link.id === id);
 
-        if (!id) {
-          mensagemElemento.textContent = "❌ Nenhum ID de link foi fornecido.";
-          return;
+                if (linkEncontrado) {
+                    window.location.replace(linkEncontrado.original);
+                } else {
+                    mensagemElemento.textContent = "🔍 Link não encontrado ou ainda não foi publicado.";
+                }
+            } catch (error) {
+                mensagemElemento.textContent = "Ocorreu um erro ao carregar os links.";
+                console.error(error);
+            }
         }
-
-        // Verifica se o ID existe no nosso objeto linksDB
-        if (linksDB && linksDB[id]) {
-          // Se existir, redireciona
-          window.location.replace(linksDB[id]);
-        } else {
-          // Se não, mostra a mensagem de erro
-          mensagemElemento.textContent = "🔍 Link não encontrado ou ainda não foi publicado.";
-        }
-      } catch (error) {
-        console.error("Erro:", error);
-        mensagemElemento.textContent = "Ocorreu um erro ao processar o link.";
-      }
-    }
-    redirecionar();
-  </script>
-
+        redirecionar();
+    </script>
 </body>
 </html>
