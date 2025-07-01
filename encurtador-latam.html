@@ -1,78 +1,77 @@
 <!DOCTYPE html>
-<html lang="es-CL">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel de Enlaces Cortos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecionando...</title>
   <style>
-    body { font-family: sans-serif; padding: 2em; background: #f9f9f9; }
-    input, button { padding: 8px; margin: 4px; }
-    .list { margin-top: 2em; }
-    .item { background: #fff; padding: 1em; border-radius: 8px; margin-bottom: 1em; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .short-url { font-weight: bold; }
+    /* Estilos básicos para centralizar a mensagem na tela */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+    p {
+      font-size: 1.2rem;
+      text-align: center;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>🔗 Encurtador de Links</h1>
-  <input id="urlInput" type="text" placeholder="Cole o escreva a URL completa..." size="50" />
-  <button onclick="encurtar()">Encurtar</button>
 
-  <div class="list" id="listaLinks"></div>
+  <p id="mensagem">Aguarde, estamos processando seu link...</p>
+
+  <noscript>
+    <p>Para que esta página funcione, você precisa habilitar o JavaScript em seu navegador.</p>
+  </noscript>
 
   <script>
-    const baseURL = window.location.origin + "/redir.html?id=";
+    // Envolvemos o código em uma função para melhor organização
+    function executarRedirecionamento() {
+      const mensagemElemento = document.getElementById("mensagem");
 
-    function gerarID() {
-      return Math.random().toString(36).substr(2, 6);
+      try {
+        // 1. Pega os parâmetros da URL de forma segura
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        // Validação inicial: verifica se o 'id' foi passado
+        if (!id) {
+          mensagemElemento.textContent = "❌ Erro: Nenhum ID de link foi fornecido na URL.";
+          return;
+        }
+
+        // 2. Acessa o localStorage e trata o caso de estar vazio ou inválido
+        const linksArmazenados = localStorage.getItem("meus_links");
+        const links = JSON.parse(linksArmazenados || "[]");
+
+        // 3. Busca pelo link correspondente ao 'id'
+        const linkDestino = links.find(l => l.id === id);
+
+        // 4. Se encontrar o link, redireciona. Senão, exibe erro.
+        if (linkDestino && linkDestino.original) {
+          // location.replace() é ligeiramente melhor que .href, pois não salva
+          // a página de redirecionamento no histórico de sessão.
+          window.location.replace(linkDestino.original);
+        } else {
+          mensagemElemento.textContent = "🔍 Link não encontrado ou expirado.";
+        }
+      } catch (error) {
+        // Captura qualquer erro inesperado (ex: JSON mal formatado no localStorage)
+        console.error("Ocorreu um erro durante o redirecionamento:", error);
+        mensagemElemento.textContent = "Ocorreu um erro inesperado ao processar seu link.";
+      }
     }
 
-    function salvarLinks(links) {
-      localStorage.setItem("meus_links", JSON.stringify(links));
-    }
-
-    function carregarLinks() {
-      return JSON.parse(localStorage.getItem("meus_links") || "[]");
-    }
-
-    function encurtar() {
-      const original = document.getElementById("urlInput").value.trim();
-      if (!original) return;
-
-      const links = carregarLinks();
-      const id = gerarID();
-      links.push({ id, original });
-      salvarLinks(links);
-      document.getElementById("urlInput").value = "";
-      renderizar();
-    }
-
-    function editar(id) {
-      const novaURL = prompt("Nova URL de destino:");
-      if (!novaURL) return;
-
-      const links = carregarLinks().map(l => l.id === id ? { ...l, original: novaURL } : l);
-      salvarLinks(links);
-      renderizar();
-    }
-
-    function renderizar() {
-      const links = carregarLinks();
-      const container = document.getElementById("listaLinks");
-      container.innerHTML = "";
-
-      links.forEach(link => {
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-          <div>➡️ Original: <a href="${link.original}" target="_blank">${link.original}</a></div>
-          <div>✂️ Curto: <span class="short-url">${baseURL + link.id}</span></div>
-          <button onclick="editar('${link.id}')">Editar destino</button>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    renderizar();
+    // Executa a função principal
+    executarRedirecionamento();
   </script>
+
 </body>
 </html>
