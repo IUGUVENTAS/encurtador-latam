@@ -1,0 +1,23 @@
+{
+  "name": "encurtador-latam",
+  "version": "1.0.0",
+  "main": "links-db.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IUGUVENTAS/encurtador-latam.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IUGUVENTAS/encurtador-latam/issues"
+  },
+  "homepage": "https://github.com/IUGUVENTAS/encurtador-latam#readme",
+  "description": "",
+  "dependencies": {
+    "@octokit/rest": "^22.0.0"
+  }
+}
