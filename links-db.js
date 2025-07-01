@@ -4,4 +4,6 @@ const linksDB = {
   "ooi2zb": "https://admin.shopify.com/",
 
   "hfyx4j": "https://www.speedtest.net/pt",
+
+  "ja2t85": "https://www.speedtest.net/pt",
 };
