@@ -1,261 +1,368 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Encurtador LATAM</title>
-  <style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ZedoLink</title>
+    <style>
+    /*
+    ==============================================
+    == 1. VARIÁVEIS GLOBAIS (Paleta de Cores e Padrões) ==
+    ==============================================
+    */
     :root {
-      --primary-color: #007bff;
-      --primary-hover: #0056b3;
-      --danger-color: #dc3545;
-      --danger-hover: #c82333;
-      --light-gray: #f8f9fa;
-      --medium-gray: #dee2e6;
-      --dark-gray: #343a40;
-      --text-color: #212529;
-      --border-radius: 8px;
+        --header-bg: #2c2c3d;
+        --body-bg: #f0f2f5;
+        --form-bg: #ffffff;
+        --primary-button-bg: #5cb85c;
+        --primary-button-hover: #4cae4c;
+        --secondary-button-bg: #337ab7;
+        --edit-button-bg: #f0ad4e;
+        --delete-button-bg: #d9534f;
+        --text-dark: #333;
+        --text-light: #fff;
+        --border-color: #ddd;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --border-radius: 6px;
     }
+
+    /*
+    ==============================================
+    == 2. ESTILOS BASE E RESET                    ==
+    ==============================================
+    */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--light-gray);
-      color: var(--text-color);
-      margin: 0;
-      padding: 20px;
+        font-family: Arial, sans-serif;
+        background-color: var(--body-bg);
+        color: var(--text-dark);
+        margin: 0;
     }
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+    /*
+    ==============================================
+    == 3. ESTRUTURA PRINCIPAL (Layout)          ==
+    ==============================================
+    */
+    .header {
+        background-color: var(--header-bg);
+        padding: 15px 0;
+        display: flex;
+        align-items: center;
     }
-    header h1 {
-      color: var(--dark-gray);
-      text-align: center;
-      margin-bottom: 30px;
+
+    .header-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 30px;
     }
-    .form-container {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 40px;
+
+    .header .logo img {
+        height: 65px;
     }
-    #urlOriginal {
-      flex-grow: 1;
-      padding: 12px;
-      border: 1px solid var(--medium-gray);
-      border-radius: var(--border-radius);
-      font-size: 1rem;
+
+    .main-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        padding: 30px;
+        max-width: 1200px;
+        margin: auto;
     }
-    button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: bold;
-      transition: background-color 0.2s;
+
+    /*
+    ==============================================
+    == 4. SEÇÕES DE CONTEÚDO (Formulário e Lista) ==
+    ==============================================
+    */
+    .form-section {
+        flex: 1;
+        min-width: 350px;
+        background-color: var(--form-bg);
+        padding: 25px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        align-self: flex-start;
     }
-    button[type="submit"] {
-      background-color: var(--primary-color);
-      color: white;
+
+    .links-section {
+        flex: 1.5;
+        min-width: 400px;
     }
-    button[type="submit"]:hover {
-      background-color: var(--primary-hover);
+
+    /*
+    ==============================================
+    == 5. COMPONENTES                             ==
+    ==============================================
+    */
+    .form-section h2, .links-section h2 {
+        font-size: 1.5rem;
+        margin-top: 0;
+        margin-bottom: 20px;
     }
-    .links-header {
-        border-bottom: 2px solid var(--medium-gray);
-        padding-bottom: 10px;
-        margin-bottom: 10px;
+    .links-section h2 { font-size: 1.2rem; color: #555; }
+
+    #formCriarLink input[type="url"] {
+        width: calc(100% - 24px);
+        padding: 12px;
+        font-size: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        margin-bottom: 15px;
     }
+
+    #formCriarLink button {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--text-light);
+        background-color: var(--primary-button-bg);
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    #formCriarLink button:hover { background-color: var(--primary-button-hover); }
+
+    #status-message { display: none; margin-top: 15px; padding: 15px; border-radius: var(--border-radius); text-align: center; font-weight: bold; }
+    #status-message.success { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
+    #status-message.error { background-color: #f2dede; color: #a94442; border: 1px solid #ebccd1; }
+    
     .link-item {
-      display: grid;
-      grid-template-columns: 2fr 3fr 1fr;
-      align-items: center;
-      padding: 15px 10px;
-      border-bottom: 1px solid var(--medium-gray);
-      gap: 15px;
+        background-color: var(--form-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
-    .link-item:last-child {
-      border-bottom: none;
-    }
-    .link-info .short-url a {
-      color: var(--primary-color);
-      font-weight: bold;
-      text-decoration: none;
-    }
-    .link-info .original-url {
-      font-size: 0.85rem;
-      color: #6c757d;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .link-actions button {
-      margin-right: 5px;
-      padding: 5px 10px;
-      font-size: 0.8rem;
-    }
-    .btn-edit { background-color: #ffc107; color: black; }
-    .btn-delete { background-color: var(--danger-color); color: white; }
-    .btn-copy { background-color: #6c757d; color: white; }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: var(--border-radius);
-      width: 90%;
-      max-width: 500px;
-    }
+
+    .link-item-content { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
+    .link-item-meme img { width: 80px; height: 80px; border-radius: var(--border-radius); object-fit: cover; }
+    .link-item .urls { display: flex; flex-direction: column; }
+    .link-item .short-url a { font-weight: bold; color: var(--text-dark); text-decoration: none; font-size: 1.1rem; }
+    .link-item .original-url { color: #6c757d; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 350px; }
+    .link-item .link-actions { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 5px; }
+    .link-actions button { padding: 6px 12px; font-size: 0.85rem; color: var(--text-light); border: none; border-radius: var(--border-radius); cursor: pointer; }
+    .btn-edit { background-color: var(--edit-button-bg); opacity: 0.5; cursor: not-allowed; }
+    .btn-delete { background-color: var(--delete-button-bg); opacity: 0.5; cursor: not-allowed; }
+    .btn-copy, .btn-qr, .btn-share { background-color: var(--secondary-button-bg); }
+
+    /*
+    ==============================================
+    == 6. COMPONENTES AVANÇADOS (Modals e Feedback) ==
+    ==============================================
+    */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 30px; border-radius: var(--border-radius); width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; }
     .modal-content input { width: calc(100% - 24px); padding: 12px; margin-bottom: 20px; }
-  </style>
+    .modal-content button { margin-right: 10px; }
+    #qr-code-img { max-width: 200px; margin: 20px auto; display: block; }
+    
+    #meme-feedback {
+        position: fixed;
+        top: 50%;
+        right: 30px;
+        z-index: 2000;
+        background-color: var(--header-bg);
+        color: var(--text-light);
+        padding: 15px;
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        opacity: 0;
+        transform: translate(200%, -50%);
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+    }
+    #meme-feedback.show { opacity: 1; transform: translate(0, -50%); }
+    #meme-feedback img { width: 70px; height: 70px; object-fit: cover; border-radius: 50%; border: 2px solid white; }
+    #meme-feedback p { margin: 0; font-weight: bold; }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1>Dashboard do Encurtador</h1>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="img/ZEDOLINK.png" alt="ZedoLink Logo">
+            </div>
+        </div>
     </header>
 
-    <form id="formCriarLink" class="form-container">
-      <input type="url" id="urlOriginal" placeholder="Cole sua URL longa aqui para encurtar" required>
-      <button type="submit">Encurtar</button>
-    </form>
+    <main class="main-container">
+        <section class="form-section">
+            <h2>Encurtar uma URL longa</h2>
+            <form id="formCriarLink">
+                <input type="url" id="urlOriginal" placeholder="Cole sua URL longa aqui" required>
+                <button type="submit">Encurtar URL</button>
+            </form>
+            <div id="status-message"></div>
+        </section>
 
-    <section class="links-container">
-      <h2 class="links-header">Meus Links</h2>
-      <div id="links-lista">
+        <section class="links-section">
+            <h2>Seus Links Recentes da ZedoLink</h2>
+            <div id="links-lista"></div>
+        </section>
+    </main>
+
+    <div id="qr-modal" class="modal">
+        <div class="modal-content">
+            <h3>QR Code do seu Link</h3>
+            <img id="qr-code-img" src="" alt="QR Code">
+            <button id="close-qr-btn" style="background-color: #6c757d; color: white;">Fechar</button>
         </div>
-    </section>
-  </div>
-
-  <div id="edit-modal" class="modal">
-    <div class="modal-content">
-      <h3>Editar URL de Destino</h3>
-      <input type="url" id="edit-url-input">
-      <button id="save-edit-btn">Salvar</button>
-      <button id="cancel-edit-btn">Cancelar</button>
     </div>
-  </div>
-
-  <script>
-    const formCriarLink = document.getElementById('formCriarLink');
-    const urlOriginalInput = document.getElementById('urlOriginal');
-    const linksListaDiv = document.getElementById('links-lista');
-    const editModal = document.getElementById('edit-modal');
-    const editUrlInput = document.getElementById('edit-url-input');
-    const saveEditBtn = document.getElementById('save-edit-btn');
-    const cancelEditBtn = document.getElementById('cancel-edit-btn');
-    let idParaEditar = null;
-
-    // FUNÇÃO PRINCIPAL: Renderiza a lista de links
-    function renderizarLinks() {
-      const links = JSON.parse(localStorage.getItem('meus_links') || '[]');
-      linksListaDiv.innerHTML = ''; // Limpa a lista atual
-
-      if (links.length === 0) {
-        linksListaDiv.innerHTML = '<p>Nenhum link criado ainda. Use o formulário acima para começar!</p>';
-        return;
-      }
-      
-      links.reverse().forEach(link => {
-        const shortUrl = `${window.location.origin}/?id=${link.id}`;
-        const linkElement = document.createElement('div');
-        linkElement.className = 'link-item';
-        linkElement.innerHTML = `
-          <div class="link-info">
-            <div class="short-url"><a href="${shortUrl}" target="_blank">${shortUrl.replace('https://','')}</a></div>
-          </div>
-          <div class="link-info">
-            <div class="original-url" title="${link.original}">${link.original}</div>
-          </div>
-          <div class="link-actions">
-            <button class="btn-copy" data-url="${shortUrl}">Copiar</button>
-            <button class="btn-edit" data-id="${link.id}">Editar</button>
-            <button class="btn-delete" data-id="${link.id}">Excluir</button>
-          </div>
-        `;
-        linksListaDiv.appendChild(linkElement);
-      });
-    }
-
-    // EVENTO: Criar um novo link
-    formCriarLink.addEventListener('submit', function(event) {
-      event.preventDefault();
-      const links = JSON.parse(localStorage.getItem('meus_links') || '[]');
-      const id = Math.random().toString(36).substring(2, 8);
-      
-      links.push({ id: id, original: urlOriginalInput.value });
-      localStorage.setItem('meus_links', JSON.stringify(links));
-      
-      formCriarLink.reset();
-      renderizarLinks();
-    });
-
-    // EVENTOS: Ações na lista de links (Copiar, Editar, Excluir)
-    linksListaDiv.addEventListener('click', function(event) {
-      const target = event.target;
-      const id = target.dataset.id;
-
-      // Ação de Excluir
-      if (target.classList.contains('btn-delete')) {
-        if (confirm('Tem certeza que deseja excluir este link?')) {
-          let links = JSON.parse(localStorage.getItem('meus_links') || '[]');
-          links = links.filter(link => link.id !== id);
-          localStorage.setItem('meus_links', JSON.stringify(links));
-          renderizarLinks();
-        }
-      }
-
-      // Ação de Editar
-      if (target.classList.contains('btn-edit')) {
-        const links = JSON.parse(localStorage.getItem('meus_links') || '[]');
-        const linkParaEditar = links.find(link => link.id === id);
-        idParaEditar = id;
-        editUrlInput.value = linkParaEditar.original;
-        editModal.style.display = 'flex';
-      }
-
-      // Ação de Copiar
-      if (target.classList.contains('btn-copy')) {
-        const urlParaCopiar = target.dataset.url;
-        navigator.clipboard.writeText(urlParaCopiar).then(() => {
-          target.textContent = 'Copiado!';
-          setTimeout(() => { target.textContent = 'Copiar'; }, 2000);
-        });
-      }
-    });
-
-    // EVENTO: Salvar a edição no Modal
-    saveEditBtn.addEventListener('click', function() {
-      let links = JSON.parse(localStorage.getItem('meus_links') || '[]');
-      const linkIndex = links.findIndex(link => link.id === idParaEditar);
-      
-      links[linkIndex].original = editUrlInput.value;
-      localStorage.setItem('meus_links', JSON.stringify(links));
-      
-      editModal.style.display = 'none';
-      renderizarLinks();
-    });
     
-    // EVENTO: Cancelar edição no Modal
-    cancelEditBtn.addEventListener('click', () => {
-      editModal.style.display = 'none';
-    });
+    <div id="meme-feedback">
+        <img id="feedback-img" src="" alt="Feedback">
+        <p id="feedback-text"></p>
+    </div>
 
-    // Renderiza os links existentes ao carregar a página
-    renderizarLinks();
-  </script>
+    <script src="links-db.js"></script>
+    <script>
+        // --- SELETORES DE ELEMENTOS ---
+        const formCriarLink = document.getElementById('formCriarLink');
+        const urlOriginalInput = document.getElementById('urlOriginal');
+        const linksListaDiv = document.getElementById('links-lista');
+        const statusMessageDiv = document.getElementById('status-message');
+        const submitButton = formCriarLink.querySelector('button');
+        const qrModal = document.getElementById('qr-modal');
+        const qrCodeImg = document.getElementById('qr-code-img');
+        const closeQrBtn = document.getElementById('close-qr-btn');
+        const memeFeedbackDiv = document.getElementById('meme-feedback');
+        const feedbackImg = document.getElementById('feedback-img');
+        const feedbackText = document.getElementById('feedback-text');
 
+        // --- BANCO DE DADOS DE MEMES (Apenas para o feedback visual) ---
+        const feedbackMemes = {
+            'btn-copy':   { meme: 'IMG/aicemequebra.webp', text: 'Link Copiado!' },
+            'btn-delete': { meme: 'IMG/calmatrav.webp', text: 'Função desabilitada' },
+            'btn-edit':   { meme: 'IMG/gordinhodancando.jpeg', text: 'Função desabilitada' },
+            'btn-share':  { meme: 'IMG/homerdancando.webp', text: 'Compartilhe!' },
+            'btn-qr':     { meme: 'IMG/fe9d8ca4-7fdf-44f3-8dd8-ef4f6e4c3022.webp', text: 'QR Code Gerado!' }
+        };
+
+        // --- FUNÇÕES ---
+
+        function renderizarLinks() {
+            // A variável 'ZedoLinksDB' vem do arquivo 'links-db.js' que carregamos no HTML
+            const links = typeof ZedoLinksDB !== 'undefined' ? ZedoLinksDB : [];
+            linksListaDiv.innerHTML = '';
+            if (links.length === 0) {
+                linksListaDiv.innerHTML = '<p>Nenhum link público criado ainda.</p>';
+                return;
+            }
+            links.slice().reverse().forEach(link => {
+                const shortUrl = `${window.location.origin}/?id=${link.id}`;
+                const linkElement = document.createElement('div');
+                linkElement.className = 'link-item';
+                linkElement.innerHTML = `
+                    <div class="link-item-meme">
+                        <img src="${link.memeUrl}" alt="Meme do Link">
+                    </div>
+                    <div class="link-item-content">
+                        <div class="urls">
+                            <span class="short-url"><a href="${shortUrl}" target="_blank">${shortUrl}</a></span>
+                            <span class="original-url" title="${link.original}">Destino: ${link.original}</span>
+                        </div>
+                        <div class="link-actions">
+                            <button class="btn-copy" data-url="${shortUrl}">Copiar</button>
+                            <button class="btn-share" data-url="${shortUrl}">Share</button>
+                            <button class="btn-qr" data-url="${shortUrl}">QR</button>
+                            <button class="btn-edit" title="Função em desenvolvimento">Editar</button>
+                            <button class="btn-delete" title="Função em desenvolvimento">Excluir</button>
+                        </div>
+                    </div>
+                `;
+                linksListaDiv.appendChild(linkElement);
+            });
+        }
+
+        function showMemeFeedback(memeUrl, message) {
+            feedbackImg.src = memeUrl;
+            feedbackText.textContent = message;
+            memeFeedbackDiv.classList.add('show');
+            setTimeout(() => {
+                memeFeedbackDiv.classList.remove('show');
+            }, 2500);
+        }
+
+        function showStatusMessage(message, type = 'success') {
+            statusMessageDiv.innerHTML = message;
+            statusMessageDiv.className = type;
+            statusMessageDiv.style.display = 'block';
+            setTimeout(() => { statusMessageDiv.style.display = 'none'; }, 6000);
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // Evento para CRIAR um novo link (chama a função na Netlify)
+        formCriarLink.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const urlParaEncurtar = urlOriginalInput.value;
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Enviando...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/adicionar-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: urlParaEncurtar })
+                });
+                if (!response.ok) throw new Error('Falha na resposta do servidor.');
+
+                showStatusMessage(`✅ Sucesso! Seu novo link estará no ar em ~1 minuto. <br>Atualize a página para vê-lo na lista.`);
+                formCriarLink.reset();
+
+            } catch (error) {
+                showStatusMessage('❌ Ops! Algo deu errado. Verifique o console e tente novamente.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Encurtar URL';
+            }
+        });
+
+        // Evento para as AÇÕES nos links já existentes (Copiar, QR, etc.)
+        linksListaDiv.addEventListener('click', function(event) {
+            const target = event.target;
+            if (target.tagName !== 'BUTTON') return;
+
+            const url = target.dataset.url;
+            
+            for (const btnClass in feedbackMemes) {
+                if (target.classList.contains(btnClass)) {
+                    const feedback = feedbackMemes[btnClass];
+                    showMemeFeedback(feedback.meme, feedback.text);
+                    break;
+                }
+            }
+
+            if (target.classList.contains('btn-copy')) {
+                navigator.clipboard.writeText(url).then(() => {
+                    target.textContent = 'Copiado!';
+                    setTimeout(() => { target.textContent = 'Copiar'; }, 2000);
+                });
+            } else if (target.classList.contains('btn-share')) {
+                if (navigator.share) {
+                    navigator.share({ title: 'ZedoLink', text: 'Confira este link:', url: url });
+                } else { alert('Seu navegador não suporta a função de compartilhamento.'); }
+            } else if (target.classList.contains('btn-qr')) {
+                qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+                qrModal.style.display = 'flex';
+            }
+        });
+
+        closeQrBtn.addEventListener('click', () => { qrModal.style.display = 'none'; });
+
+        // --- INICIALIZAÇÃO ---
+        // Renderiza a lista de links que vem do arquivo 'links-db.js'
+        renderizarLinks();
+    </script>
 </body>
 </html>

@@ -1,0 +1,8 @@
+// Arquivo: links-db.js
+const ZedoLinksDB = [
+  {
+    "id": "exemplo",
+    "original": "https://www.google.com/",
+    "memeUrl": "IMG/calmatrav.webp"
+  }
+];
