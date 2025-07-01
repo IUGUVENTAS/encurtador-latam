@@ -5,4 +5,6 @@ const ZedoLinksDB = [
     "original": "https://www.google.com/",
     "memeUrl": "IMG/calmatrav.webp"
   }
-];
+
+  "ms4e5w": "https://www.speedtest.net/pt",
+};
