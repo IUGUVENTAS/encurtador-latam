@@ -6,7 +6,7 @@
     <title>Dashboard - ZedoLink</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* O CSS continua exatamente o mesmo, o design está mantido */
+        /* O CSS está 100% completo e correto, mantendo seu design */
         :root {
             --header-bg: #2c2c3d; --body-bg: #f0f2f5; --form-bg: #ffffff;
             --primary-button-bg: #5cb85c; --primary-button-hover: #4cae4c;
@@ -26,9 +26,6 @@
         #formCriarLink input[type="url"] { width: calc(100% - 24px); padding: 12px; font-size: 1rem; border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-bottom: 15px; }
         #formCriarLink button { width: 100%; padding: 15px; font-size: 1.2rem; font-weight: bold; color: var(--text-light); background-color: var(--primary-button-bg); border: none; border-radius: var(--border-radius); cursor: pointer; transition: background-color 0.2s; }
         #formCriarLink button:hover { background-color: var(--primary-button-hover); }
-        #status-message { display: none; margin-top: 15px; padding: 15px; border-radius: var(--border-radius); text-align: center; font-weight: bold; }
-        #status-message.success { background-color: #dff0d8; color: #3c763d; }
-        #status-message.error { background-color: #f2dede; color: #a94442; }
         .link-item { background-color: var(--form-bg); border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; }
         .link-item-content { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
         .link-item-meme img { width: 80px; height: 80px; border-radius: var(--border-radius); object-fit: cover; }
@@ -40,16 +37,66 @@
         .btn-edit { background-color: var(--edit-button-bg); }
         .btn-delete { background-color: var(--delete-button-bg); }
         .btn-copy, .btn-qr, .btn-share { background-color: var(--secondary-button-bg); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: var(--border-radius); width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); text-align: center; }
+        .modal-content input { width: calc(100% - 24px); padding: 12px; margin-bottom: 20px; }
+        .modal-content button { margin-right: 10px; }
+        #qr-code-img { max-width: 200px; margin: 20px auto; display: block; }
+        #meme-feedback { position: fixed; top: 50%; right: 30px; z-index: 2000; background-color: var(--header-bg); color: var(--text-light); padding: 15px; border-radius: var(--border-radius); display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); opacity: 0; transform: translate(200%, -50%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease; }
+        #meme-feedback.show { opacity: 1; transform: translate(0, -50%); }
+        #meme-feedback img { width: 70px; height: 70px; object-fit: cover; border-radius: 50%; border: 2px solid white; }
+        #meme-feedback p { margin: 0; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <header class="header"> </header>
-    <main class="main-container"> </main>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <img src="img/ZEDOLINK.png" alt="ZedoLink Logo">
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="form-section">
+            <h2>Encurtar uma URL longa</h2>
+            <form id="formCriarLink">
+                <input type="url" id="urlOriginal" placeholder="Cole sua URL longa aqui" required>
+                <button type="submit">Encurtar URL</button>
+            </form>
+        </section>
+
+        <section class="links-section">
+            <h2>Seus Links Recentes da ZedoLink</h2>
+            <div id="links-lista"></div>
+        </section>
+    </main>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3>Editar URL de Destino</h3>
+            <input type="url" id="edit-url-input">
+            <button id="save-edit-btn" style="background-color: var(--primary-button-bg); color: white;">Salvar</button>
+            <button id="cancel-edit-btn" style="background-color: #6c757d; color: white;">Cancelar</button>
+        </div>
+    </div>
+    <div id="qr-modal" class="modal">
+        <div class="modal-content">
+            <h3>QR Code do seu Link</h3>
+            <img id="qr-code-img" src="" alt="QR Code">
+            <button id="close-qr-btn" style="background-color: #6c757d; color: white;">Fechar</button>
+        </div>
+    </div>
+    <div id="meme-feedback">
+        <img id="feedback-img" src="" alt="Feedback">
+        <p id="feedback-text"></p>
+    </div>
+
     <script>
-        // --- 2. CONFIGURAÇÃO DA CONEXÃO COM O SUPABASE ---
+        // --- CONFIGURAÇÃO DA CONEXÃO COM O SUPABASE ---
         const SUPABASE_URL = 'https://rxqxvjxmpxwcsdxvumiz.supabase.co';
-        const SUPABASE_ANON_KEY = 'COLE_SUA_CHAVE_ANON_PUBLIC_AQUI'; // <-- COLE SUA CHAVE AQUI
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4cXh2anhtcHh3Y3NkeHZ1bWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzOTg5MDksImV4cCI6MjA2Njk3NDkwOX0.uDUoZxZtEmNnJ9kklBmI5T1D5A5Xz0emxIUt5Eg0wNE';
 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -58,18 +105,33 @@
         const urlOriginalInput = document.getElementById('urlOriginal');
         const linksListaDiv = document.getElementById('links-lista');
         const submitButton = formCriarLink.querySelector('button');
-        // ... (outros seletores que você já tem)
+        const editModal = document.getElementById('edit-modal');
+        const editUrlInput = document.getElementById('edit-url-input');
+        const saveEditBtn = document.getElementById('save-edit-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const qrModal = document.getElementById('qr-modal');
+        const qrCodeImg = document.getElementById('qr-code-img');
+        const closeQrBtn = document.getElementById('close-qr-btn');
+        const memeFeedbackDiv = document.getElementById('meme-feedback');
+        const feedbackImg = document.getElementById('feedback-img');
+        const feedbackText = document.getElementById('feedback-text');
+        let linkParaEditarId = null;
 
+        // --- BANCO DE DADOS DE MEMES ---
         const memeSequence = [
             'IMG/calmatrav.webp', 'IMG/homerdancando.webp', 'IMG/aicemequebra.webp',
             'IMG/meme 1.webp', 'IMG/gordinhodancando.jpeg', 'IMG/fe9d8ca4-7fdf-44f3-8dd8-ef4f6e4c3022.webp'
         ];
+        const feedbackMemes = {
+            'btn-copy':   { meme: 'IMG/aicemequebra.webp', text: 'Copiado!' },
+            'btn-edit':   { meme: 'IMG/gordinhodancando.jpeg', text: 'Editando...' },
+            'btn-delete': { meme: 'IMG/calmatrav.webp', text: 'Excluído!' },
+            'btn-share':  { meme: 'IMG/homerdancando.webp', text: 'Compartilhe!' },
+            'btn-qr':     { meme: 'IMG/fe9d8ca4-7fdf-44f3-8dd8-ef4f6e4c3022.webp', text: 'QR Code!' }
+        };
 
         // --- FUNÇÕES ---
-
-        // FUNÇÃO PARA MOSTRAR OS LINKS (AGORA LENDO DO SUPABASE)
         async function renderizarLinks() {
-            // Pede ao Supabase todos os links da tabela 'links', ordenados pelos mais recentes
             const { data: links, error } = await supabase
                 .from('links')
                 .select('*')
@@ -77,12 +139,12 @@
 
             if (error) {
                 console.error('Erro ao buscar links:', error);
-                linksListaDiv.innerHTML = '<p style="color: red;">Erro ao carregar a lista de links.</p>';
+                linksListaDiv.innerHTML = `<p style="color: red;">Erro ao carregar a lista de links: ${error.message}</p>`;
                 return;
             }
 
             linksListaDiv.innerHTML = '';
-            if (links.length === 0) {
+            if (!links || links.length === 0) {
                 linksListaDiv.innerHTML = '<p>Nenhum link criado ainda.</p>';
                 return;
             }
@@ -91,7 +153,6 @@
                 const shortUrl = `${window.location.origin}/?id=${link.short_id}`;
                 const linkElement = document.createElement('div');
                 linkElement.className = 'link-item';
-                // Usamos os nomes das colunas que criamos no Supabase
                 linkElement.innerHTML = `
                     <div class="link-item-meme"> <img src="${link.meme_url}" alt="Meme"> </div>
                     <div class="link-item-content">
@@ -112,35 +173,36 @@
             });
         }
 
-        // FUNÇÃO PARA CRIAR UM NOVO LINK (AGORA SALVANDO NO SUPABASE)
+        function showMemeFeedback(memeUrl, message) {
+            feedbackImg.src = memeUrl;
+            feedbackText.textContent = message;
+            memeFeedbackDiv.classList.add('show');
+            setTimeout(() => { memeFeedbackDiv.classList.remove('show'); }, 2500);
+        }
+
+        function fecharModals() {
+            editModal.style.display = 'none';
+            qrModal.style.display = 'none';
+        }
+
+        // --- EVENT LISTENERS ---
         formCriarLink.addEventListener('submit', async function(event) {
             event.preventDefault();
             const urlParaEncurtar = urlOriginalInput.value;
-            
             submitButton.disabled = true;
             submitButton.textContent = 'Enviando...';
-
             try {
-                // Prepara os dados para o novo link
-                const short_id = Math.random().toString(36).substring(2, 8);
-                const { data: countData } = await supabase.from('links').select('*', { count: 'exact', head: true });
-                const memeIndex = countData.count % memeSequence.length;
+                const { count } = await supabase.from('links').select('*', { count: 'exact', head: true });
+                const memeIndex = count % memeSequence.length;
                 const meme_url = memeSequence[memeIndex];
-                
-                // Insere a nova linha na tabela 'links' do Supabase
-                const { error } = await supabase
-                    .from('links')
-                    .insert({ 
-                        short_id: short_id, 
-                        original_url: urlParaEncurtar, 
-                        meme_url: meme_url 
-                    });
-
-                if (error) throw error; // Se o Supabase retornar um erro, lança para o catch
-
+                const { error } = await supabase.from('links').insert({ 
+                    short_id: Math.random().toString(36).substring(2, 8), 
+                    original_url: urlParaEncurtar, 
+                    meme_url: meme_url 
+                });
+                if (error) throw error;
                 formCriarLink.reset();
-                renderizarLinks(); // ATUALIZA A LISTA NA TELA INSTANTANEAMENTE!
-
+                await renderizarLinks();
             } catch (error) {
                 alert(`Erro ao criar o link: ${error.message}`);
             } finally {
@@ -149,9 +211,55 @@
             }
         });
 
-        // Ações de Editar e Excluir agora também são instantâneas
-        // (O resto do seu script com as lógicas de clique nos botões, modals e feedback de memes)
-        // ...
+        linksListaDiv.addEventListener('click', async function(event) {
+            const target = event.target;
+            if (target.tagName !== 'BUTTON') return;
+            const url = target.dataset.url;
+            const id = target.dataset.id;
+            for (const btnClass in feedbackMemes) { if (target.classList.contains(btnClass)) { showMemeFeedback(feedbackMemes[btnClass].meme, feedbackMemes[btnClass].text); break; } }
+            if (target.classList.contains('btn-copy')) {
+                navigator.clipboard.writeText(url).then(() => {
+                    target.textContent = 'Copiado!';
+                    setTimeout(() => { target.textContent = 'Copiar'; }, 2000);
+                });
+            } else if (target.classList.contains('btn-share')) {
+                if (navigator.share) { navigator.share({ title: 'ZedoLink', text: 'Confira este link:', url: url }); } else { alert('Seu navegador não suporta a função de compartilhamento.'); }
+            } else if (target.classList.contains('btn-qr')) {
+                qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+                qrModal.style.display = 'flex';
+            } else if (target.classList.contains('btn-edit')) {
+                linkParaEditarId = id;
+                editUrlInput.value = target.dataset.originalUrl;
+                editModal.style.display = 'flex';
+            } else if (target.classList.contains('btn-delete')) {
+                if (confirm('Você tem certeza que deseja excluir este link permanentemente?')) {
+                    const { error } = await supabase.from('links').delete().eq('id', id);
+                    if (error) { alert(`Erro ao excluir: ${error.message}`); } else { await renderizarLinks(); }
+                }
+            }
+        });
+
+        saveEditBtn.addEventListener('click', async function() {
+            const novaUrl = editUrlInput.value;
+            if (!linkParaEditarId || !novaUrl) return;
+            saveEditBtn.disabled = true;
+            saveEditBtn.textContent = 'Salvando...';
+            try {
+                const { error } = await supabase.from('links').update({ original_url: novaUrl }).eq('id', linkParaEditarId);
+                if (error) throw error;
+                fecharModals();
+                await renderizarLinks();
+            } catch (error) {
+                alert(`Erro ao salvar edição: ${error.message}`);
+            } finally {
+                saveEditBtn.disabled = false;
+                saveEditBtn.textContent = 'Salvar';
+                linkParaEditarId = null;
+            }
+        });
+        
+        cancelEditBtn.addEventListener('click', fecharModals);
+        closeQrBtn.addEventListener('click', fecharModals);
 
         // --- INICIALIZAÇÃO ---
         renderizarLinks();
