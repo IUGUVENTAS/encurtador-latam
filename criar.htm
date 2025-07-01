@@ -3,56 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Criar Novo Link - Encurtador LATAM</title>
+  <title>Dashboard - Encurtador LATAM</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background-color: #f0f2f5; }
-    h1 { color: #1c1e21; }
-    input[type="url"] { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #dddfe2; border-radius: 6px; }
-    button { background-color: #1877f2; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
-    button:hover { background-color: #166fe5; }
-    #resultado { margin-top: 20px; padding: 10px; background-color: #e7f3ff; border: 1px solid #1877f2; border-radius: 6px; word-wrap: break-word; }
-    #resultado a { color: #1877f2; text-decoration: none; font-weight: bold; }
+    :root {
+      --primary-color: #007bff;
+      --primary-hover: #0056b3;
+      --danger-color: #dc3545;
+      --danger-hover: #c82333;
+      --light-gray: #f8f9fa;
+      --medium-gray: #dee2e6;
+      --dark-gray: #343a40;
+      --text-color: #212529;
+      --border-radius: 8px;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--light-gray);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      color: var(--dark-gray);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .form-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+    #urlOriginal {
+      flex-grow: 1;
+      padding: 12px;
+      border: 1px solid var(--medium-gray);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+    }
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    button[type="submit"] {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    button[type="submit"]:hover {
+      background-color: var(--primary-hover);
+    }
+    .links-header {
+        border-bottom: 2px solid var(--medium-gray);
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+    .link-item {
+      display: grid;
+      grid-template-columns: 2fr 3fr 1fr;
+      align-items: center;
+      padding: 15px 10px;
+      border-bottom: 1px solid var(--medium-gray);
+      gap: 15px;
+    }
+    .link-item:last-child {
+      border-bottom: none;
+    }
+    .link-info .short-url a {
+      color: var(--primary-color);
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .link-info .original-url {
+      font-size: 0.85rem;
+      color: #6c757d;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .link-actions button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+    }
+    .btn-edit { background-color: #ffc107; color: black; }
+    .btn-delete { background-color: var(--danger-color); color: white; }
+    .btn-copy { background-color: #6c757d; color: white; }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 500px;
+    }
+    .modal-content input { width: calc(100% - 24px); padding: 12px; margin-bottom: 20px; }
   </style>
 </head>
 <body>
 
-  <h1>Criar Novo Link Encurtado</h1>
-  <form id="formCriarLink">
-    <input type="url" id="urlOriginal" placeholder="https://cole.seu.link.longo.aqui" required>
-    <button type="submit">Encurtar Link</button>
-  </form>
+  <div class="container">
+    <header>
+      <h1>Dashboard do Encurtador</h1>
+    </header>
 
-  <div id="resultado" style="display:none;"></div>
+    <form id="formCriarLink" class="form-container">
+      <input type="url" id="urlOriginal" placeholder="Cole sua URL longa aqui para encurtar" required>
+      <button type="submit">Encurtar</button>
+    </form>
+
+    <section class="links-container">
+      <h2 class="links-header">Meus Links</h2>
+      <div id="links-lista">
+        </div>
+    </section>
+  </div>
+
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <h3>Editar URL de Destino</h3>
+      <input type="url" id="edit-url-input">
+      <button id="save-edit-btn">Salvar</button>
+      <button id="cancel-edit-btn">Cancelar</button>
+    </div>
+  </div>
 
   <script>
-    document.getElementById('formCriarLink').addEventListener('submit', function(event) {
-      event.preventDefault(); // Impede o envio do formulário
+    const formCriarLink = document.getElementById('formCriarLink');
+    const urlOriginalInput = document.getElementById('urlOriginal');
+    const linksListaDiv = document.getElementById('links-lista');
+    const editModal = document.getElementById('edit-modal');
+    const editUrlInput = document.getElementById('edit-url-input');
+    const saveEditBtn = document.getElementById('save-edit-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    let idParaEditar = null;
 
-      const urlOriginal = document.getElementById('urlOriginal').value;
-      const resultadoDiv = document.getElementById('resultado');
-
-      // 1. Gera um ID curto e aleatório
-      const id = Math.random().toString(36).substring(2, 8);
-
-      // 2. Pega os links já existentes do localStorage ou cria uma lista vazia
+    // FUNÇÃO PRINCIPAL: Renderiza a lista de links
+    function renderizarLinks() {
       const links = JSON.parse(localStorage.getItem('meus_links') || '[]');
+      linksListaDiv.innerHTML = ''; // Limpa a lista atual
 
-      // 3. Adiciona o novo link à lista
-      links.push({
-        id: id,
-        original: urlOriginal
+      if (links.length === 0) {
+        linksListaDiv.innerHTML = '<p>Nenhum link criado ainda. Use o formulário acima para começar!</p>';
+        return;
+      }
+      
+      links.reverse().forEach(link => {
+        const shortUrl = `${window.location.origin}/?id=${link.id}`;
+        const linkElement = document.createElement('div');
+        linkElement.className = 'link-item';
+        linkElement.innerHTML = `
+          <div class="link-info">
+            <div class="short-url"><a href="${shortUrl}" target="_blank">${shortUrl.replace('https://','')}</a></div>
+          </div>
+          <div class="link-info">
+            <div class="original-url" title="${link.original}">${link.original}</div>
+          </div>
+          <div class="link-actions">
+            <button class="btn-copy" data-url="${shortUrl}">Copiar</button>
+            <button class="btn-edit" data-id="${link.id}">Editar</button>
+            <button class="btn-delete" data-id="${link.id}">Excluir</button>
+          </div>
+        `;
+        linksListaDiv.appendChild(linkElement);
       });
+    }
 
-      // 4. Salva a lista atualizada de volta no localStorage
+    // EVENTO: Criar um novo link
+    formCriarLink.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const links = JSON.parse(localStorage.getItem('meus_links') || '[]');
+      const id = Math.random().toString(36).substring(2, 8);
+      
+      links.push({ id: id, original: urlOriginalInput.value });
       localStorage.setItem('meus_links', JSON.stringify(links));
-
-      // 5. Mostra o link encurtado para o usuário
-      const urlEncurtada = `${window.location.origin}/?id=${id}`;
-      resultadoDiv.innerHTML = `Link gerado com sucesso! <br><a href="${urlEncurtada}" target="_blank">${urlEncurtada}</a>`;
-      resultadoDiv.style.display = 'block';
-
-      document.getElementById('formCriarLink').reset();
+      
+      formCriarLink.reset();
+      renderizarLinks();
     });
+
+    // EVENTOS: Ações na lista de links (Copiar, Editar, Excluir)
+    linksListaDiv.addEventListener('click', function(event) {
+      const target = event.target;
+      const id = target.dataset.id;
+
+      // Ação de Excluir
+      if (target.classList.contains('btn-delete')) {
+        if (confirm('Tem certeza que deseja excluir este link?')) {
+          let links = JSON.parse(localStorage.getItem('meus_links') || '[]');
+          links = links.filter(link => link.id !== id);
+          localStorage.setItem('meus_links', JSON.stringify(links));
+          renderizarLinks();
+        }
+      }
+
+      // Ação de Editar
+      if (target.classList.contains('btn-edit')) {
+        const links = JSON.parse(localStorage.getItem('meus_links') || '[]');
+        const linkParaEditar = links.find(link => link.id === id);
+        idParaEditar = id;
+        editUrlInput.value = linkParaEditar.original;
+        editModal.style.display = 'flex';
+      }
+
+      // Ação de Copiar
+      if (target.classList.contains('btn-copy')) {
+        const urlParaCopiar = target.dataset.url;
+        navigator.clipboard.writeText(urlParaCopiar).then(() => {
+          target.textContent = 'Copiado!';
+          setTimeout(() => { target.textContent = 'Copiar'; }, 2000);
+        });
+      }
+    });
+
+    // EVENTO: Salvar a edição no Modal
+    saveEditBtn.addEventListener('click', function() {
+      let links = JSON.parse(localStorage.getItem('meus_links') || '[]');
+      const linkIndex = links.findIndex(link => link.id === idParaEditar);
+      
+      links[linkIndex].original = editUrlInput.value;
+      localStorage.setItem('meus_links', JSON.stringify(links));
+      
+      editModal.style.display = 'none';
+      renderizarLinks();
+    });
+    
+    // EVENTO: Cancelar edição no Modal
+    cancelEditBtn.addEventListener('click', () => {
+      editModal.style.display = 'none';
+    });
+
+    // Renderiza os links existentes ao carregar a página
+    renderizarLinks();
   </script>
 
 </body>
